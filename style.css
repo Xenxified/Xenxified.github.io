@@ -1,6 +1,6 @@
 :root {
     --bg: #ffffff;
-    --text: #1a1a1a;
+    --text: #000000;
     --card-bg: rgba(255, 255, 255, 0.8);
     --accent: #2563eb;
     --nav-bg: rgba(255, 255, 255, 0.9);
@@ -9,7 +9,7 @@
 
 [data-theme="dark"] {
     --bg: #080a25;
-    --text: #010433;
+    --text: #FFFFFF;
     --card-bg: rgba(15, 23, 42, 0.7);
     --accent: #38bdf8;
     --nav-bg: rgba(2, 6, 23, 0.9);
