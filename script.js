@@ -112,7 +112,7 @@ form.onsubmit = async (e) => {
     e.preventDefault();
     const statusMsg = document.getElementById('formStatus');
     statusMsg.classList.remove('hidden');
-    statusMsg.textContent = "🚀 Transmitting...";
+    statusMsg.textContent = "🚀 Sending...";
     
     const response = await fetch(form.action, {
         method: 'POST',
@@ -121,7 +121,7 @@ form.onsubmit = async (e) => {
     });
 
     if (response.ok) {
-        statusMsg.textContent = "✓ Transmission Received! Check Gmail for activation if first time.";
+        statusMsg.textContent = "✓ Support message has been sent!.";
         form.reset();
     } else {
         statusMsg.textContent = "❌ Transmission failed.";
