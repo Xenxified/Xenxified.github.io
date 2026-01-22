@@ -74,7 +74,6 @@ window.onscroll = () => { scrollBtn.style.display = window.scrollY > 500 ? "bloc
 scrollBtn.onclick = () => window.scrollTo({top: 0, behavior: 'smooth'});
 
 function initScrollObservers() {
-    // Skill Bar Animation
     const skillObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
@@ -84,7 +83,6 @@ function initScrollObservers() {
     }, { threshold: 0.5 });
     document.querySelectorAll('.skill-per').forEach(bar => skillObserver.observe(bar));
 
-    // Active Nav Highlight
     const sections = document.querySelectorAll('section');
     const navItems = document.querySelectorAll('.nav-item');
     window.addEventListener('scroll', () => {
@@ -98,6 +96,27 @@ function initScrollObservers() {
         });
     });
 }
+
+// --- Word Limit Logic ---
+const messageArea = document.getElementById('messageArea');
+const wordCountDisplay = document.getElementById('wordCount');
+const submitBtn = document.getElementById('submitBtn');
+
+messageArea.addEventListener('input', function() {
+    const words = this.value.trim().split(/\s+/).filter(w => w.length > 0);
+    const count = words.length;
+    wordCountDisplay.textContent = count;
+    
+    if(count > 50) {
+        wordCountDisplay.style.color = "#ef4444"; // Red if over limit
+        submitBtn.disabled = true;
+        submitBtn.style.opacity = "0.5";
+    } else {
+        wordCountDisplay.style.color = "var(--accent)";
+        submitBtn.disabled = false;
+        submitBtn.style.opacity = "1";
+    }
+});
 
 // --- Interactive UI (Email & Form) ---
 document.getElementById('emailCopy').onclick = function() {
@@ -113,7 +132,7 @@ form.onsubmit = async (e) => {
     const statusMsg = document.getElementById('formStatus');
     statusMsg.classList.remove('hidden');
     statusMsg.textContent = "🚀 Sending...";
-    
+
     const response = await fetch(form.action, {
         method: 'POST',
         body: new FormData(form),
@@ -123,6 +142,7 @@ form.onsubmit = async (e) => {
     if (response.ok) {
         statusMsg.textContent = "✓ Support message has been sent!.";
         form.reset();
+        wordCountDisplay.textContent = "0"; // Reset counter
     } else {
         statusMsg.textContent = "❌ Transmission failed.";
     }
