@@ -97,18 +97,24 @@ function initScrollObservers() {
     });
 }
 
-// --- Character Limit Logic ---
+// --- Word Limit Logic ---
 const messageArea = document.getElementById('messageArea');
-const charCountDisplay = document.getElementById('charCount');
+const wordCountDisplay = document.getElementById('wordCount');
+const submitBtn = document.getElementById('submitBtn');
 
 messageArea.addEventListener('input', function() {
-    const charCount = this.value.length;
-    charCountDisplay.textContent = charCount;
+    const words = this.value.trim().split(/\s+/).filter(w => w.length > 0);
+    const count = words.length;
+    wordCountDisplay.textContent = count;
     
-    if(charCount >= 250) {
-        charCountDisplay.style.color = "#ef4444";
+    if(count > 50) {
+        wordCountDisplay.style.color = "#ef4444"; // Red if over limit
+        submitBtn.disabled = true;
+        submitBtn.style.opacity = "0.5";
     } else {
-        charCountDisplay.style.color = "var(--accent)";
+        wordCountDisplay.style.color = "var(--accent)";
+        submitBtn.disabled = false;
+        submitBtn.style.opacity = "1";
     }
 });
 
@@ -136,7 +142,7 @@ form.onsubmit = async (e) => {
     if (response.ok) {
         statusMsg.textContent = "✓ Support message has been sent!.";
         form.reset();
-        charCountDisplay.textContent = "0"; // Reset counter display
+        wordCountDisplay.textContent = "0"; // Reset counter
     } else {
         statusMsg.textContent = "❌ Transmission failed.";
     }
