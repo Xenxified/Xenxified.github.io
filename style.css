@@ -32,7 +32,7 @@ body {
 @keyframes spin { to { transform: rotate(360deg); } }
 .fade-out { opacity: 0; visibility: hidden; transition: 0.5s; }
 
-/* --- Nav & Clock --- */
+/* --- Navigation --- */
 header { position: sticky; top: 0; background: var(--nav-bg); backdrop-filter: blur(10px); z-index: 100; border-bottom: 1px solid var(--border); }
 nav { display: flex; justify-content: space-between; align-items: center; padding: 1rem 5%; max-width: 1200px; margin: 0 auto; }
 .logo { font-weight: 800; font-size: 1.5rem; color: var(--accent); letter-spacing: 2px; }
@@ -57,7 +57,7 @@ nav { display: flex; justify-content: space-between; align-items: center; paddin
 /* --- Layout --- */
 .container { padding: 5rem 5%; max-width: 1200px; margin: 0 auto; }
 .section-title { text-align: center; margin-bottom: 3rem; font-size: 2.2rem; }
-.glass-card { background: var(--card-bg); backdrop-filter: blur(12px); padding: 2.5rem; border-radius: 24px; border: 1px solid var(--border); transition: transform 0.3s ease; }
+.glass-card { background: var(--card-bg); backdrop-filter: blur(12px); padding: 2.5rem; border-radius: 24px; border: 1px solid var(--border); }
 .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
 
 /* --- Gallery --- */
@@ -66,15 +66,19 @@ nav { display: flex; justify-content: space-between; align-items: center; paddin
 .project-info { position: absolute; inset: 0; background: rgba(2, 6, 23, 0.9); display: flex; flex-direction: column; justify-content: center; align-items: center; opacity: 0; transition: 0.4s; transform: translateY(20px); }
 .project-card:hover .project-info { opacity: 1; transform: translateY(0); }
 
+/* --- Forms --- */
+.form-group { margin-bottom: 1.5rem; }
+input, textarea { width: 100%; padding: 14px; border-radius: 10px; border: 1px solid var(--border); background: rgba(255,255,255,0.05); color: var(--text); outline: none; }
+#formStatus { margin-top: 1rem; font-weight: bold; color: var(--accent); }
+
 /* --- UI --- */
 .btn-primary { background: var(--accent); color: #fff; border: none; padding: 14px 32px; border-radius: 12px; font-weight: 600; cursor: pointer; }
-#themeToggle { background: var(--border); border: none; padding: 10px; border-radius: 50%; cursor: pointer; }
+#themeToggle { background: var(--border); border: none; padding: 10px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; }
 #scrollToTop { position: fixed; bottom: 30px; right: 30px; width: 50px; height: 50px; border-radius: 50%; background: var(--accent); color: white; border: none; cursor: pointer; display: none; z-index: 100; box-shadow: 0 0 15px var(--accent); }
+.copy-email { background: var(--border); padding: 10px 20px; border-radius: 8px; cursor: pointer; display: inline-block; margin-bottom: 1rem; font-weight: bold; }
+.hidden { display: none; }
 
-.copy-email { background: var(--border); padding: 10px 20px; border-radius: 8px; cursor: pointer; display: inline-block; margin-bottom: 2rem; font-weight: bold; }
-#copyStatus { color: var(--accent); font-size: 0.8rem; height: 1.2rem; margin-top: -1.5rem; margin-bottom: 1rem; }
-
-/* --- Mobile --- */
+/* --- Mobile Nav --- */
 #nav-check, .nav-btn { display: none; }
 @media (max-width: 768px) {
     .nav-btn { display: flex; flex-direction: column; gap: 5px; cursor: pointer; }
