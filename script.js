@@ -22,7 +22,7 @@ themeBtn.addEventListener('click', () => {
 });
 
 // --- Typewriter ---
-const text = "Xenxified Test Website: VOID";
+const text = "mantas Test Website: VOID";
 let idx = 0;
 function typeEffect() {
     const target = document.getElementById("typewriterText");
