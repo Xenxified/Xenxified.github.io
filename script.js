@@ -1,109 +1,127 @@
-// --- Theme & Loader ---
+// --- Initialize ---
 window.addEventListener('load', () => {
     document.getElementById('loader').classList.add('fade-out');
-    setTimeout(typeEffect, 1000);
+    setTimeout(typeEffect, 800);
     initParticles();
+    startClock();
+    initScrollObservers();
 });
 
+// --- Theme Logic ---
 const html = document.documentElement;
 const themeBtn = document.getElementById('themeToggle');
 const savedTheme = localStorage.getItem('theme') || 'dark';
 html.setAttribute('data-theme', savedTheme);
+themeBtn.querySelector('.icon').textContent = savedTheme === 'light' ? '🌙' : '☀️';
 
 themeBtn.addEventListener('click', () => {
-    const current = html.getAttribute('data-theme');
-    const next = current === 'light' ? 'dark' : 'light';
+    const next = html.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
     html.setAttribute('data-theme', next);
     localStorage.setItem('theme', next);
     themeBtn.querySelector('.icon').textContent = next === 'light' ? '🌙' : '☀️';
 });
 
-// --- Typewriter Effect ---
+// --- Typewriter ---
 const text = "Beyond the Interface";
-let index = 0;
+let idx = 0;
 function typeEffect() {
     const target = document.getElementById("typewriterText");
-    if (index < text.length) {
-        target.textContent += text.charAt(index);
-        index++;
+    if (idx < text.length) {
+        target.textContent += text.charAt(idx++);
         setTimeout(typeEffect, 100);
-    } else {
-        target.style.borderRight = "none";
-    }
+    } else { target.style.borderRight = "none"; }
 }
 
-// --- Particle System ---
+// --- Particles ---
 const canvas = document.getElementById('particleCanvas');
 const ctx = canvas.getContext('2d');
 let particles = [];
-
 function initParticles() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
-    for(let i=0; i<70; i++) {
+    for(let i=0; i<60; i++) {
         particles.push({
-            x: Math.random() * canvas.width,
-            y: Math.random() * canvas.height,
+            x: Math.random() * canvas.width, y: Math.random() * canvas.height,
             size: Math.random() * 2 + 1,
-            speedX: Math.random() * 0.5 - 0.25,
-            speedY: Math.random() * 0.5 - 0.25
+            speedX: Math.random() * 0.4 - 0.2, speedY: Math.random() * 0.4 - 0.2
         });
     }
     animate();
 }
-
 function animate() {
     ctx.clearRect(0,0, canvas.width, canvas.height);
     ctx.fillStyle = getComputedStyle(html).getPropertyValue('--accent');
     ctx.globalAlpha = 0.2;
     particles.forEach(p => {
         p.x += p.speedX; p.y += p.speedY;
-        if(p.x > canvas.width) p.x = 0;
-        if(p.y > canvas.height) p.y = 0;
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size, 0, Math.PI*2);
-        ctx.fill();
+        if(p.x > canvas.width || p.x < 0) p.x = Math.random() * canvas.width;
+        if(p.y > canvas.height || p.y < 0) p.y = Math.random() * canvas.height;
+        ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI*2); ctx.fill();
     });
     requestAnimationFrame(animate);
 }
 
-// --- Cursor Logic ---
-document.addEventListener('mousemove', (e) => {
-    const cursor = document.getElementById('cursor');
-    const blur = document.getElementById('cursor-blur');
-    if(cursor) {
-        cursor.style.left = e.clientX - 10 + 'px';
-        cursor.style.top = e.clientY - 10 + 'px';
-        blur.style.left = e.clientX - 100 + 'px';
-        blur.style.top = e.clientY - 100 + 'px';
-    }
-});
+// --- Clock & Scroll ---
+function startClock() {
+    setInterval(() => {
+        document.getElementById('liveClock').textContent = new Date().toLocaleTimeString();
+    }, 1000);
+}
 
-// --- Scroll Logic ---
 const scrollBtn = document.getElementById('scrollToTop');
-window.onscroll = () => {
-    if (window.scrollY > 500) scrollBtn.style.display = "block";
-    else scrollBtn.style.display = "none";
-};
+window.onscroll = () => { scrollBtn.style.display = window.scrollY > 500 ? "block" : "none"; };
 scrollBtn.onclick = () => window.scrollTo({top: 0, behavior: 'smooth'});
 
-// --- Form Validation ---
-document.getElementById('contactForm').addEventListener('submit', (e) => {
-    e.preventDefault();
-    const form = e.target;
-    let valid = true;
-    form.querySelectorAll('[required]').forEach(input => {
-        if(!input.value.trim()) {
-            input.parentElement.classList.add('invalid');
-            valid = false;
-        } else {
-            input.parentElement.classList.remove('invalid');
-        }
+// --- Intersection Observers (Skills & Active Nav) ---
+function initScrollObservers() {
+    // Skill Bars
+    const skillObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.width = entry.target.getAttribute('data-per') + '%';
+            }
+        });
+    }, { threshold: 0.5 });
+    document.querySelectorAll('.skill-per').forEach(bar => skillObserver.observe(bar));
+
+    // Active Link Highlight
+    const sections = document.querySelectorAll('section');
+    const navItems = document.querySelectorAll('.nav-item');
+    window.addEventListener('scroll', () => {
+        let current = '';
+        sections.forEach(section => {
+            const sectionTop = section.offsetTop;
+            if (pageYOffset >= sectionTop - 100) {
+                current = section.getAttribute('id');
+            }
+        });
+        navItems.forEach(item => {
+            item.classList.remove('active');
+            if (item.getAttribute('href').includes(current)) {
+                item.classList.add('active');
+            }
+        });
     });
-    if(valid) {
-        const status = document.getElementById('formStatus');
-        status.textContent = "Message sent!";
-        status.classList.remove('hidden');
+}
+
+// --- Interaction (Copy & Form) ---
+document.getElementById('emailCopy').onclick = function() {
+    navigator.clipboard.writeText(this.textContent);
+    document.getElementById('copyStatus').textContent = "✓ Copied to clipboard!";
+    setTimeout(() => document.getElementById('copyStatus').textContent = "", 2000);
+};
+
+const form = document.getElementById('contactForm');
+form.onsubmit = async (e) => {
+    e.preventDefault();
+    const status = document.getElementById('formStatus');
+    status.classList.remove('hidden');
+    status.textContent = "Transmitting...";
+    const response = await fetch(e.target.action, { 
+        method: 'POST', body: new FormData(e.target), headers: { 'Accept': 'application/json' } 
+    });
+    if (response.ok) {
+        status.textContent = "✓ Transmission Received.";
         form.reset();
-    }
-});
+    } else { status.textContent = "Error sending message."; }
+};
