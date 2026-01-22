@@ -74,24 +74,6 @@ window.onscroll = () => { scrollBtn.style.display = window.scrollY > 500 ? "bloc
 scrollBtn.onclick = () => window.scrollTo({top: 0, behavior: 'smooth'});
 
 function initScrollObservers() {
-    // Reveal animations on scroll
-    const revealObserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.style.opacity = "1";
-                entry.target.style.transform = "translateY(0)";
-            }
-        });
-    }, { threshold: 0.1 });
-
-    document.querySelectorAll('.animate-on-scroll').forEach(el => {
-        el.style.opacity = "0";
-        el.style.transform = "translateY(30px)";
-        el.style.transition = "all 0.8s ease-out";
-        revealObserver.observe(el);
-    });
-
-    // Skill Bar Animation
     const skillObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
@@ -101,7 +83,6 @@ function initScrollObservers() {
     }, { threshold: 0.5 });
     document.querySelectorAll('.skill-per').forEach(bar => skillObserver.observe(bar));
 
-    // Active Nav Highlight
     const sections = document.querySelectorAll('section');
     const navItems = document.querySelectorAll('.nav-item');
     window.addEventListener('scroll', () => {
@@ -120,13 +101,16 @@ function initScrollObservers() {
 const messageArea = document.getElementById('messageArea');
 const charCountDisplay = document.getElementById('charCount');
 
-if(messageArea) {
-    messageArea.addEventListener('input', function() {
-        const charCount = this.value.length;
-        charCountDisplay.textContent = charCount;
-        charCountDisplay.style.color = charCount >= 250 ? "#ef4444" : "var(--accent)";
-    });
-}
+messageArea.addEventListener('input', function() {
+    const charCount = this.value.length;
+    charCountDisplay.textContent = charCount;
+    
+    if(charCount >= 250) {
+        charCountDisplay.style.color = "#ef4444";
+    } else {
+        charCountDisplay.style.color = "var(--accent)";
+    }
+});
 
 // --- Interactive UI (Email & Form) ---
 document.getElementById('emailCopy').onclick = function() {
@@ -152,7 +136,7 @@ form.onsubmit = async (e) => {
     if (response.ok) {
         statusMsg.textContent = "✓ Support message has been sent!.";
         form.reset();
-        charCountDisplay.textContent = "0";
+        charCountDisplay.textContent = "0"; // Reset counter display
     } else {
         statusMsg.textContent = "❌ Transmission failed.";
     }
