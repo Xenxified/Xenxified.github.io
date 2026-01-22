@@ -79,9 +79,9 @@
                     <div class="form-group"><input type="text" name="name" placeholder="Your Name" required></div>
                     <div class="form-group"><input type="email" name="email" placeholder="Your Email" required></div>
                     <div class="form-group">
-                        <textarea id="messageArea" name="message" placeholder="Message (Max 50 words)..." rows="4" required></textarea>
+                        <textarea id="messageArea" name="message" placeholder="Message (Max 250 chars)..." rows="4" maxlength="250" required></textarea>
                         <div style="font-size: 0.75rem; text-align: right; margin-top: 5px; opacity: 0.6;">
-                            Words: <span id="wordCount">0</span>/50
+                            Characters: <span id="charCount">0</span>/250
                         </div>
                     </div>
                     <button type="submit" id="submitBtn" class="btn-primary" style="width: 100%;">Send Support Message</button>
