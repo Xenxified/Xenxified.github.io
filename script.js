@@ -22,7 +22,7 @@ themeBtn.addEventListener('click', () => {
 });
 
 // --- Typewriter ---
-const text = "Beyond the Interface";
+const text = "Xenxified Test Website: VOID";
 let idx = 0;
 function typeEffect() {
     const target = document.getElementById("typewriterText");
