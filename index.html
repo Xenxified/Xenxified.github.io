@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VOID | Premium Interface</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="loader"><div class="spinner"></div></div>
+
+    <div id="cursor"></div>
+    <div id="cursor-blur"></div>
+
+    <header>
+        <nav>
+            <div class="logo">VOID</div>
+            <input type="checkbox" id="nav-check">
+            <label for="nav-check" class="nav-btn">
+                <span></span><span></span><span></span>
+            </label>
+            
+            <ul class="nav-links">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#projects">Work</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+
+            <button id="themeToggle" aria-label="Toggle Theme">
+                <span class="icon">🌙</span>
+            </button>
+        </nav>
+    </header>
+
+    <main>
+        <section id="home" class="hero">
+            <canvas id="particleCanvas"></canvas>
+            <div class="glass-card hero-content">
+                <h1 id="typewriterText" class="typewriter"></h1>
+                <p>Clean code. Dark aesthetics. Infinite possibilities.</p>
+                <button id="greetButton" class="btn-primary">Say Hello!</button>
+                <p id="greeting"></p>
+            </div>
+        </section>
+
+        <section id="projects" class="container">
+            <h2 class="section-title">Project Gallery</h2>
+            <div class="gallery-grid">
+                <div class="project-card">
+                    <div class="project-info"><h3>Cyber System</h3><p>UI Design</p></div>
+                </div>
+                <div class="project-card">
+                    <div class="project-info"><h3>Neural Net</h3><p>AI Core</p></div>
+                </div>
+                <div class="project-card">
+                    <div class="project-info"><h3>Void OS</h3><p>Concept</p></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="about" class="container">
+            <h2 class="section-title">Our Vision</h2>
+            <div class="grid">
+                <div class="card"><h3>Fast</h3><p>Optimized for 60fps interaction.</p></div>
+                <div class="card"><h3>Safe</h3><p>Modern validation & security.</p></div>
+                <div class="card"><h3>Deep</h3><p>A dark blue + black ecosystem.</p></div>
+            </div>
+        </section>
+
+        <section id="contact" class="container">
+            <div class="glass-card contact-container">
+                <h2 class="section-title">Get in Touch</h2>
+                <form id="contactForm" novalidate>
+                    <div class="form-group">
+                        <input type="text" id="name" placeholder="Name" required>
+                        <span class="error-msg">Name is required</span>
+                    </div>
+                    <div class="form-group">
+                        <input type="email" id="email" placeholder="Email" required>
+                        <span class="error-msg">Valid email required</span>
+                    </div>
+                    <div class="form-group">
+                        <textarea id="message" placeholder="Message" rows="4" required></textarea>
+                        <span class="error-msg">Message is required</span>
+                    </div>
+                    <button type="submit" class="btn-primary" style="width: 100%;">Send Message</button>
+                </form>
+                <div id="formStatus" class="hidden"></div>
+            </div>
+        </section>
+    </main>
+
+    <button id="scrollToTop">↑</button>
+
+    <script src="script.js"></script>
+</body>
+</html>
