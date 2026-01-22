@@ -1,4 +1,4 @@
-// --- Initialize ---
+// --- Core Engine ---
 window.addEventListener('load', () => {
     document.getElementById('loader').classList.add('fade-out');
     setTimeout(typeEffect, 800);
@@ -61,20 +61,20 @@ function animate() {
     requestAnimationFrame(animate);
 }
 
-// --- Clock & Scroll ---
+// --- Live Clock ---
 function startClock() {
     setInterval(() => {
         document.getElementById('liveClock').textContent = new Date().toLocaleTimeString();
     }, 1000);
 }
 
+// --- Scroll Logic ---
 const scrollBtn = document.getElementById('scrollToTop');
 window.onscroll = () => { scrollBtn.style.display = window.scrollY > 500 ? "block" : "none"; };
 scrollBtn.onclick = () => window.scrollTo({top: 0, behavior: 'smooth'});
 
-// --- Intersection Observers (Skills & Active Nav) ---
 function initScrollObservers() {
-    // Skill Bars
+    // Skill Bar Animation
     const skillObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
@@ -84,44 +84,46 @@ function initScrollObservers() {
     }, { threshold: 0.5 });
     document.querySelectorAll('.skill-per').forEach(bar => skillObserver.observe(bar));
 
-    // Active Link Highlight
+    // Active Nav Highlight
     const sections = document.querySelectorAll('section');
     const navItems = document.querySelectorAll('.nav-item');
     window.addEventListener('scroll', () => {
         let current = '';
         sections.forEach(section => {
-            const sectionTop = section.offsetTop;
-            if (pageYOffset >= sectionTop - 100) {
-                current = section.getAttribute('id');
-            }
+            if (pageYOffset >= section.offsetTop - 100) current = section.getAttribute('id');
         });
         navItems.forEach(item => {
             item.classList.remove('active');
-            if (item.getAttribute('href').includes(current)) {
-                item.classList.add('active');
-            }
+            if (item.getAttribute('href').includes(current)) item.classList.add('active');
         });
     });
 }
 
-// --- Interaction (Copy & Form) ---
+// --- Interactive UI (Email & Form) ---
 document.getElementById('emailCopy').onclick = function() {
     navigator.clipboard.writeText(this.textContent);
-    document.getElementById('copyStatus').textContent = "✓ Copied to clipboard!";
-    setTimeout(() => document.getElementById('copyStatus').textContent = "", 2000);
+    const status = document.getElementById('copyStatus');
+    status.textContent = "✓ Copied to clipboard!";
+    setTimeout(() => status.textContent = "", 2000);
 };
 
 const form = document.getElementById('contactForm');
 form.onsubmit = async (e) => {
     e.preventDefault();
-    const status = document.getElementById('formStatus');
-    status.classList.remove('hidden');
-    status.textContent = "Transmitting...";
-    const response = await fetch(e.target.action, { 
-        method: 'POST', body: new FormData(e.target), headers: { 'Accept': 'application/json' } 
+    const statusMsg = document.getElementById('formStatus');
+    statusMsg.classList.remove('hidden');
+    statusMsg.textContent = "🚀 Transmitting...";
+    
+    const response = await fetch(form.action, {
+        method: 'POST',
+        body: new FormData(form),
+        headers: { 'Accept': 'application/json' }
     });
+
     if (response.ok) {
-        status.textContent = "✓ Transmission Received.";
+        statusMsg.textContent = "✓ Transmission Received! Check Gmail for activation if first time.";
         form.reset();
-    } else { status.textContent = "Error sending message."; }
+    } else {
+        statusMsg.textContent = "❌ Transmission failed.";
+    }
 };
