@@ -12,7 +12,7 @@ const html = document.documentElement;
 const themeBtn = document.getElementById('themeToggle');
 const savedTheme = localStorage.getItem('theme') || 'dark';
 html.setAttribute('data-theme', savedTheme);
-themeBtn.querySelector('.icon').textContent = savedTheme === 'light' ? '🌙' : '☀️';
+if(themeBtn) themeBtn.querySelector('.icon').textContent = savedTheme === 'light' ? '🌙' : '☀️';
 
 themeBtn.addEventListener('click', () => {
     const next = html.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
@@ -26,10 +26,10 @@ const text = "Xenxified Test Website: VOID";
 let idx = 0;
 function typeEffect() {
     const target = document.getElementById("typewriterText");
-    if (idx < text.length) {
+    if (target && idx < text.length) {
         target.textContent += text.charAt(idx++);
         setTimeout(typeEffect, 100);
-    } else { target.style.borderRight = "none"; }
+    } else if (target) { target.style.borderRight = "none"; }
 }
 
 // --- Particles ---
@@ -37,6 +37,7 @@ const canvas = document.getElementById('particleCanvas');
 const ctx = canvas.getContext('2d');
 let particles = [];
 function initParticles() {
+    if(!canvas) return;
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
     for(let i=0; i<60; i++) {
@@ -50,7 +51,7 @@ function initParticles() {
 }
 function animate() {
     ctx.clearRect(0,0, canvas.width, canvas.height);
-    ctx.fillStyle = getComputedStyle(html).getPropertyValue('--accent');
+    ctx.fillStyle = getComputedStyle(html).getPropertyValue('--accent') || '#ffffff';
     ctx.globalAlpha = 0.2;
     particles.forEach(p => {
         p.x += p.speedX; p.y += p.speedY;
@@ -63,15 +64,17 @@ function animate() {
 
 // --- Live Clock ---
 function startClock() {
+    const clockEl = document.getElementById('liveClock');
+    if(!clockEl) return;
     setInterval(() => {
-        document.getElementById('liveClock').textContent = new Date().toLocaleTimeString();
+        clockEl.textContent = new Date().toLocaleTimeString();
     }, 1000);
 }
 
 // --- Scroll Logic ---
 const scrollBtn = document.getElementById('scrollToTop');
-window.onscroll = () => { scrollBtn.style.display = window.scrollY > 500 ? "block" : "none"; };
-scrollBtn.onclick = () => window.scrollTo({top: 0, behavior: 'smooth'});
+window.onscroll = () => { if(scrollBtn) scrollBtn.style.display = window.scrollY > 500 ? "block" : "none"; };
+if(scrollBtn) scrollBtn.onclick = () => window.scrollTo({top: 0, behavior: 'smooth'});
 
 function initScrollObservers() {
     const skillObserver = new IntersectionObserver((entries) => {
@@ -97,53 +100,70 @@ function initScrollObservers() {
     });
 }
 
-// --- Word Limit Logic ---
+// --- Robust Character Counter Logic ---
 const messageArea = document.getElementById('messageArea');
-const wordCountDisplay = document.getElementById('wordCount');
+const charCountDisplay = document.getElementById('charCount');
 const submitBtn = document.getElementById('submitBtn');
 
-messageArea.addEventListener('input', function() {
-    const words = this.value.trim().split(/\s+/).filter(w => w.length > 0);
-    const count = words.length;
-    wordCountDisplay.textContent = count;
-    
-    if(count > 50) {
-        wordCountDisplay.style.color = "#ef4444"; // Red if over limit
-        submitBtn.disabled = true;
-        submitBtn.style.opacity = "0.5";
+const updateCounter = () => {
+    if(!messageArea || !charCountDisplay) return;
+    const count = messageArea.value.length;
+    charCountDisplay.textContent = count;
+
+    if(count >= 250) {
+        charCountDisplay.style.color = "#ef4444"; 
     } else {
-        wordCountDisplay.style.color = "var(--accent)";
-        submitBtn.disabled = false;
-        submitBtn.style.opacity = "1";
+        charCountDisplay.style.color = "var(--accent)";
     }
-});
+};
+
+if(messageArea) {
+    messageArea.addEventListener('input', updateCounter);
+}
 
 // --- Interactive UI (Email & Form) ---
-document.getElementById('emailCopy').onclick = function() {
-    navigator.clipboard.writeText(this.textContent);
-    const status = document.getElementById('copyStatus');
-    status.textContent = "✓ Copied to clipboard!";
-    setTimeout(() => status.textContent = "", 2000);
-};
+const emailCopy = document.getElementById('emailCopy');
+if(emailCopy) {
+    emailCopy.onclick = function() {
+        navigator.clipboard.writeText(this.textContent);
+        const status = document.getElementById('copyStatus');
+        status.textContent = "✓ Copied to clipboard!";
+        setTimeout(() => status.textContent = "", 2000);
+    };
+}
 
 const form = document.getElementById('contactForm');
-form.onsubmit = async (e) => {
-    e.preventDefault();
-    const statusMsg = document.getElementById('formStatus');
-    statusMsg.classList.remove('hidden');
-    statusMsg.textContent = "🚀 Sending...";
+if(form) {
+    form.onsubmit = async (e) => {
+        e.preventDefault();
+        const statusMsg = document.getElementById('formStatus');
+        
+        // Reliability: Disable button to prevent double-sends
+        submitBtn.disabled = true;
+        statusMsg.classList.remove('hidden');
+        statusMsg.style.color = "var(--accent)";
+        statusMsg.textContent = "🚀 Sending...";
 
-    const response = await fetch(form.action, {
-        method: 'POST',
-        body: new FormData(form),
-        headers: { 'Accept': 'application/json' }
-    });
+        try {
+            const response = await fetch(form.action, {
+                method: 'POST',
+                body: new FormData(form),
+                headers: { 'Accept': 'application/json' }
+            });
 
-    if (response.ok) {
-        statusMsg.textContent = "✓ Support message has been sent!.";
-        form.reset();
-        wordCountDisplay.textContent = "0"; // Reset counter
-    } else {
-        statusMsg.textContent = "❌ Transmission failed.";
-    }
-};
+            if (response.ok) {
+                statusMsg.textContent = "✓ Support message has been sent!.";
+                form.reset();
+                updateCounter(); // Reset counter display to 0
+            } else {
+                throw new Error();
+            }
+        } catch (error) {
+            statusMsg.style.color = "#ef4444";
+            statusMsg.textContent = "❌ Failed to send. Please try again.";
+        } finally {
+            // Re-enable button after response
+            submitBtn.disabled = false;
+        }
+    };
+}
